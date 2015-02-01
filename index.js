@@ -9,8 +9,7 @@ var serial_number = 'CCC';
 //var domain = "http://localhost:9000";
 var domain = "https://derconnect.herokuapp.com";
 
-
-//var mqttServer = "mqtt://localhost:1884";
+//var mqttServer = "mqtt://localhost:1883";
 var mqttServer = "mqtt://test.mosquitto.org";
 var client  = mqtt.connect(mqttServer);
 
@@ -35,6 +34,22 @@ client.on('message', function (topic, message) {
 
 });
 
+socket.on('pi:action:temperature:' + serial_number, function (data) {
+  console.log(data);
+  
+  // send action from server to those subscribe 
+  client.publish('sensor-action', JSON.strify(data));
+
+});
+
+/*
+  YES, format should be
+  {
+    uuid : 'xxxuuid',
+    type : 'eg. tempurager'.
+    data : 'Can be string or object'
+  }
+*/
 var checkProperty = function (instance) {
   if (instance.hasOwnProperty('uuid') &&
       instance.hasOwnProperty('data') &&
@@ -46,7 +61,6 @@ var checkProperty = function (instance) {
   }
 
 }
-
 
 // for special thgin (Ip and local ip)
 setInterval(function() {
@@ -72,7 +86,7 @@ setInterval(function() {
   socket.emit('pi:receive', sendLocalIpData)
 
 
-}, 5000);
+}, 60000);
 
 
 
