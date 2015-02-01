@@ -16,7 +16,6 @@ var client  = mqtt.connect(mqttServer);
 
 socket = socket.connect(domain, { path: '/socket.io-client', query: "from=raspberry&ble_scan=1&serial_number=" + serial_number });
 
-client.subscribe('senser-action');
 client.subscribe('senser-data');
 
 client.on('message', function (topic, message) {
@@ -27,12 +26,7 @@ client.on('message', function (topic, message) {
   
   console.log(message);
 
-  if (topic == 'senser-action') {
-    if (checkProperty(message)) {
-      socket.emit('pi:action', message);
-    }
-  } 
-  else if (topic == 'senser-data') {
+  if (topic == 'senser-data') {
     if (checkProperty(message)) {
       // by pass all data to gateway derConnect
       socket.emit("pi:receive", message);  
